@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malla Curricular Odontología</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .semester-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .semester {
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px;
+            width: 300px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .semester-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.2em;
+        }
+        .course {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .course:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .available {
+            background-color: #ffcce6;
+        }
+        .completed {
+            background-color: #cc99ff;
+            text-decoration: line-through;
+        }
+        .locked {
+            background-color: #e0e0e0;
+            cursor: not-allowed;
+            color: #666;
+        }
+        .prerequisite-info {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 0 10px;
+            background-color: #6a0dad;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #5a0b9d;
+        }
+    </style>
+</head>
+<body>
+    <h1>Malla Curricular de Odontología</h1>
+    
+    <div class="controls">
+        <button id="reset-btn">Reiniciar Progreso</button>
+        <button id="complete-all-btn">Completar Todo</button>
+    </div>
+
+    <div class="semester-container" id="malla-container">
+        <!-- Los semestres se generarán dinámicamente con JavaScript -->
+    </div>
+
+    <script>
+        // Datos de la malla curricular con prerrequisitos
+        const curriculum = [
+            {
+                semester: 1,
+                courses: [
+                    { code: "ODON A001", name: "Introducción a la Odontología", prerequisites: [] },
+                    { code: "ODON A002", name: "Matemática y Física Aplicada", prerequisites: [] },
+                    { code: "DBIO 1070", name: "Biología Celular", prerequisites: [] },
+                    { code: "DQUI 1036", name: "Química General y Orgánica", prerequisites: [] },
+                    { code: "DMOR 0003", name: "Anatomía Humana", prerequisites: [] },
+                    { code: "ASIGESAP01", name: "Estrategias para el Aprendizaje", prerequisites: [] }
+                ]
+            },
+            {
+                semester: 2,
+                courses: [
+                    { code: "ODON B001", name: "Promoción y Prevención en Salud", prerequisites: ["ODON A001"] },
+                    { code: "DBIO 1071", name: "Biología Molecular y Genética", prerequisites: ["DBIO 1070"] },
+                    { code: "DBIO 1076", name: "Bioquímica General", prerequisites: ["DBIO 1070", "DQUI 1036"] },
+                    { code: "DMOR 0006", name: "Anatomía de Cabeza y Cuello", prerequisites: ["DMOR 0003"] },
+                    { code: "DMOR 0011", name: "Histoembriología", prerequisites: ["DBIO 1070"] },
+                    { code: "FILS 0001", name: "Antropología", prerequisites: [] }
+                ]
+            },
+            {
+                semester: 3,
+                courses: [
+                    { code: "ODON CO01", name: "Preclínico y Materiales Dentales I", prerequisites: ["ODON B001", "DMOR 0006"] },
+                    { code: "ODON CO02", name: "Histología Oral", prerequisites: ["DMOR 0006", "DMOR 0011"] },
+                    { code: "DBIO 1072", name: "Microbiología General", prerequisites: ["DBIO 1071"] },
+                    { code: "DBIO 1075", name: "Fisiología Humana", prerequisites: ["DBIO 1071", "DMOR 0006"] },
+                    { code: "DSPU 0001", name: "Salud Poblacional", prerequisites: ["ODON B001"] },
+                    { code: "FILS 0002", name: "Ética", prerequisites: ["FILS 0001"] }
+                ]
+            },
+            {
+                semester: 4,
+                courses: [
+                    { code: "ODON DO01", name: "Preclínico y Materiales Dentales II", prerequisites: ["ODON CO01"] },
+                    { code: "ODON DO02", name: "Simulación Clínica Integral I", prerequisites: ["ODON CO01"] },
+                    { code: "ODON DO03", name: "Cariología y Microbiología Oral", prerequisites: ["DBIO 1072", "DBIO 1076"] },
+                    { code: "ODON DO04", name: "Fisiología Oral", prerequisites: ["DBIO 1075", "DMOR 0006"] },
+                    { code: "ODON DO05", name: "Patología General", prerequisites: ["DBIO 1075"] },
+                    { code: "DBIO 1040", name: "Farmacología I", prerequisites: ["DBIO 1075", "DBIO 1076"] },
+                    { code: "ELEFORIN01", name: "Electivo de Formación Integral I", prerequisites: ["FILS 0002"] }
+                ]
+            },
+            {
+                semester: 5,
+                courses: [
+                    { code: "ODON E001", name: "Preclínico y Rehabilitación Oral I", prerequisites: [] },
+                    { code: "ODON E002", name: "Simulación Clínica Integral II", prerequisites: [] },
+                    { code: "ODON E003", name: "Inicio a la Clínica Integral I", prerequisites: [] },
+                    { code: "ODON E004", name: "Imagenología Diagnóstica I", prerequisites: [] },
+                    { code: "ODON E005", name: "Patología Oral I", prerequisites: [] },
+                    { code: "DBIO 1041", name: "Farmacología II", prerequisites: [] },
+                    { code: "DMAE E003", name: "Estadística", prerequisites: [] },
+                    { code: "DSPU 0006", name: "Bioética", prerequisites: [] }
+                ]
+            },
+            {
+                semester: 6,
+                courses: [
+                    { code: "ODON F001", name: "Preclínico y Rehabilitación Oral II", prerequisites: [] },
+                    { code: "ODON F002", name: "Simulación Clínica Integral III", prerequisites: [] },
+                    { code: "ODON F003", name: "Inicio a la Clínica Integral II", prerequisites: [] },
+                    { code: "ODON F004", name: "Imagenología Diagnóstica II", prerequisites: [] },
+                    { code: "ODON F005", name: "Patología Oral II", prerequisites: [] },
+                    { code: "ODON F006", name: "Introducción a la Clínica", prerequisites: [] },
+                    { code: "ELEFORIN02", name: "Electivo de Formación Integral II", prerequisites: [] }
+                ]
+            },
+            {
+                semester: 7,
+                courses: [
+                    { code: "ODON G001", name: "Operatoria y Rehabilitación Oral I", prerequisites: [] },
+                    { code: "ODON G002", name: "Estomatología I", prerequisites: [] },
+                    { code: "ODON G003", name: "Clínica Integrada del Adulto I", prerequisites: [] },
+                    { code: "ODON G004", name: "Clínica Integrada del Niño y Adolescente I", prerequisites: [] },
+                    { code: "ELEFORIN03", name: "Electivo de Formación Integral III", prerequisites: [] }
+                ]
+            },
+            {
+                semester: 8,
+                courses: [
+                    { code: "ODON H001", name: "Operatoria y Rehabilitación Oral II", prerequisites: ["ODON G001"] },
+                    { code: "ODON H002", name: "Estomatología II", prerequisites: ["ODON G002"] },
+                    { code: "ODON H003", name: "Clínica Integrada del Adulto II", prerequisites: ["ODON G001", "ODON G002"] },
+                    { code: "ODON H004", name: "Clínica Integrada del Niño y Adolescente II", prerequisites: ["ODON G003"] },
+                    { code: "DSPU 0003", name: "Epidemiología", prerequisites: ["DSPU 0001"] }
+                ]
+            },
+            {
+                semester: 9,
+                courses: [
+                    { code: "ODON I001", name: "Rehabilitación Oral y Prótesis I", prerequisites: ["ODON H001"] },
+                    { code: "ODON I002", name: "Estomatología III", prerequisites: ["ODON H002"] },
+                    { code: "ODON I003", name: "Clínica Integrada del Adulto y Gerodontología I", prerequisites: ["ODON H001", "ODON H002"] },
+                    { code: "ODON I004", name: "Clínica Integrada del Niño y Adolescente III", prerequisites: ["ODON H003"] },
+                    { code: "ELEFORIN04", name: "Electivo de Formación Integral IV", prerequisites: [] }
+                ]
+            },
+            {
+                semester: 10,
+                courses: [
+                    { code: "ODON J001", name: "Rehabilitación Oral y Prótesis II", prerequisites: ["ODON I001"] },
+                    { code: "ODON J002", name: "Estomatología IV", prerequisites: ["ODON I002"] },
+                    { code: "ODON J003", name: "Clínica Integrada del Adulto y Gerodontología II", prerequisites: ["ODON I001", "ODON I002", "ODON I003"] },
+                    { code: "ODON J004", name: "Clínica Integrada del Niño y Adolescente IV", prerequisites: ["ODON I004"] },
+                    { code: "ODON J005", name: "Taller de Resolución de Casos Clínicos", prerequisites: ["ODON H003", "ODON H004"] },
+                    { code: "DSPU 0005", name: "Metodología de la Investigación", prerequisites: ["DMAE E003"] }
+                ]
+            },
+            {
+                semester: 11,
+                courses: [
+                    { code: "ODON K001", name: "Gestión e Innovación en Odontología", prerequisites: ["ODON H003"] },
+                    { code: "ODON K002", name: "Odontología Forense", prerequisites: ["ODON H003"] },
+                    { code: "ODON K003", name: "Taller de Salud Comunitaria", prerequisites: ["ODON J001"] },
+                    { code: "ODON K004", name: "Taller de Investigación Aplicada", prerequisites: ["ODON J002"] },
+                    { code: "ENFESD01", name: "Salud Digital", prerequisites: ["ODON J003", "ODON J005", "DSPU 0005", "ODON J001", "ODON J002", "ODON J003", "ODON J004"] }
+                ]
+            },
+            {
+                semester: 12,
+                courses: [
+                    { code: "ODON L001", name: "Internado Clínico Asistencial", prerequisites: ["ODON J001", "ODON J002", "ODON J003", "ODON J004", "ODON J005", "DSPU 0005"] }
+                ]
+            }
+        ];
+
+        // Estado de los cursos (completados)
+        let completedCourses = JSON.parse(localStorage.getItem('completedCourses')) || [];
+
+        // Función para renderizar la malla curricular
+        function renderCurriculum() {
+            const container = document.getElementById('malla-container');
+            container.innerHTML = '';
+
+            curriculum.forEach(semesterData => {
+                const semesterDiv = document.createElement('div');
+                semesterDiv.className = 'semester';
+                
+                const semesterTitle = document.createElement('div');
+                semesterTitle.className = 'semester-title';
+                semesterTitle.textContent = `Semestre ${semesterData.semester}`;
+                semesterDiv.appendChild(semesterTitle);
+
+                semesterData.courses.forEach(course => {
+                    const courseDiv = document.createElement('div');
+                    const courseId = `${course.code.replace(/\s+/g, '-')}`;
+                    courseDiv.id = courseId;
+                    
+                    // Verificar si el curso está completado
+                    const isCompleted = completedCourses.includes(course.code);
+                    
+                    // Verificar prerrequisitos
+                    const prerequisitesMet = course.prerequisites.every(req => completedCourses.includes(req));
+                    const isLocked = course.prerequisites.length > 0 && !prerequisitesMet;
+                    
+                    // Determinar la clase del curso
+                    if (isCompleted) {
+                        courseDiv.className = 'course completed';
+                    } else if (isLocked) {
+                        courseDiv.className = 'course locked';
+                    } else {
+                        courseDiv.className = 'course available';
+                    }
+                    
+                    // Crear contenido del curso
+                    const courseContent = document.createElement('div');
+                    courseContent.innerHTML = `<strong>${course.code}</strong>: ${course.name}`;
+                    
+                    // Agregar información de prerrequisitos si es necesario
+                    if (course.prerequisites.length > 0 && !isCompleted) {
+                        const prereqInfo = document.createElement('div');
+                        prereqInfo.className = 'prerequisite-info';
+                        prereqInfo.textContent = `Prerreq: ${course.prerequisites.join(', ')}`;
+                        courseContent.appendChild(prereqInfo);
+                    }
+                    
+                    courseDiv.appendChild(courseContent);
+                    
+                    // Agregar evento click solo si no está bloqueado ni completado
+                    if (!isLocked && !isCompleted) {
+                        courseDiv.addEventListener('click', () => toggleCourseCompletion(course.code));
+                    }
+                    
+                    semesterDiv.appendChild(courseDiv);
+                });
+                
+                container.appendChild(semesterDiv);
+            });
+        }
+
+        // Función para alternar el estado de completado de un curso
+        function toggleCourseCompletion(courseCode) {
+            const index = completedCourses.indexOf(courseCode);
+            if (index === -1) {
+                completedCourses.push(courseCode);
+            } else {
+                completedCourses.splice(index, 1);
+            }
+            
+            // Guardar en localStorage
+            localStorage.setItem('completedCourses', JSON.stringify(completedCourses));
+            
+            // Volver a renderizar
+            renderCurriculum();
+        }
+
+        // Función para reiniciar el progreso
+        function resetProgress() {
+            completedCourses = [];
+            localStorage.setItem('completedCourses', JSON.stringify(completedCourses));
+            renderCurriculum();
+        }
+
+        // Función para completar todos los cursos
+        function completeAllCourses() {
+            curriculum.forEach(semester => {
+                semester.courses.forEach(course => {
+                    if (!completedCourses.includes(course.code)) {
+                        completedCourses.push(course.code);
+                    }
+                });
+            });
+            localStorage.setItem('completedCourses', JSON.stringify(completedCourses));
+            renderCurriculum();
+        }
+
+        // Event listeners para los botones
+        document.getElementById('reset-btn').addEventListener('click', resetProgress);
+        document.getElementById('complete-all-btn').addEventListener('click', completeAllCourses);
+
+        // Renderizar la malla al cargar la página
+        document.addEventListener('DOMContentLoaded', renderCurriculum);
+    </script>
+</body>
+</html>
