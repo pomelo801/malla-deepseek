@@ -1,0 +1,102 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f5f5f5;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+/* Contenedor de semestres */
+.semester-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+/* Estilo de cada semestre */
+.semester {
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px;
+    width: 300px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Título del semestre */
+.semester-title {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 1.2em;
+}
+
+/* Estilo base de los cursos */
+.course {
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+/* Efecto hover para cursos */
+.course:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Cursos disponibles (no completados) */
+.available {
+    background-color: #ffcce6; /* Rosa */
+}
+
+/* Cursos completados */
+.completed {
+    background-color: #cc99ff; /* Morado */
+    text-decoration: line-through;
+}
+
+/* Cursos bloqueados por prerrequisitos */
+.locked {
+    background-color: #e0e0e0; /* Gris */
+    cursor: not-allowed;
+    color: #666;
+}
+
+/* Información de prerrequisitos */
+.prerequisite-info {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Controles (botones) */
+.controls {
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Estilo de botones */
+button {
+    padding: 10px 15px;
+    margin: 0 10px;
+    background-color: #6a0dad;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Efecto hover para botones */
+button:hover {
+    background-color: #5a0b9d;
+}
